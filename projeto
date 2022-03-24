@@ -1,0 +1,376 @@
+#1 - Cadastrar novos clientes
+
+#variaveis de verificacao
+
+
+
+class usuarios:
+  nome:None
+  cpf:None
+  senha:None
+  email:None
+  limite_credito:None
+  
+
+#Cadastrar novos produtos
+class produtos:
+  id=None
+  valor = None
+  nome = None
+
+
+class carrinhos:
+  cpfUsuario:None
+  valorCompra=0
+  prodCompra=[]
+  prodNome=None
+  prodQtd=None
+  prodValor=None
+  compras=None
+  
+  #1-Cadastro
+#define uma função para cadastrar os novos clientes, se eles ja estiverem cadastrados ocorrerá um erro.
+
+def cadastro(vetusuarios):
+  cpfOk=False 
+  senhaOk=False
+  emailOk=False
+  nomeOK=False
+  verificaCpf=[]
+  
+ 
+  usuario = usuarios()
+  while nomeOK!=True:
+    usuario.nome = input("Insira seu nome ")
+    nomeOK=valida_nome(usuario.nome,nomeOK)
+  while cpfOk != True:
+    usuario.cpf = input("Insira seu cpf (sem os pontos e hifens)")
+    verificaCpf.append(usuario.cpf)
+    cpfOk=valida_cpf(usuario.cpf,verificaCpf,cpfOk)
+    for vetusario in vetusuarios:
+      if usuario.cpf==vetusario.cpf:
+        print("o cpf já existe")
+        cpfOk=False
+  while senhaOk != True:
+    usuario.senha = input("Insira sua senha ")
+    senhaOk=valida_senha(usuario.senha,senhaOk)
+  while emailOk!=True:
+    usuario.email = input("Insira seu email ")
+    emailOk=valida_email(usuario.email,emailOk)
+  usuario.limite_credito = 1000
+  cpfOk=False
+  senhaOk=False
+  emailOk=False
+  nomeOK=False
+ 
+  vetusuarios.append(usuario)
+    #----------------------TENTAR USAR REVERSE()--------------------------
+def valida_cpf(cpf,verifica,cpfOk):
+  digitos=[]
+  tamanhoCpf=list(verifica[0])
+  total=0
+  total2=0
+  j=2
+  k=3
+  #aq eu verifico o tamanho pq tem q ter 11 digitos
+  if len(tamanhoCpf)==11: 
+    #aq eu vou listar e apagar os digitos verificadores pra comparar dps
+    cpfList=list(cpf)
+    cpfList.pop()
+    cpfList.pop()
+    cpfList.reverse()
+    #print(cpfList)
+    #aq faz a conta do primeiro digito verificador
+    for i in range (len(cpfList)):
+      total+=int(cpfList[i])*j
+      j+=1
+    resto=total/11
+    mod=total%11
+   
+  #   Se o resto da divisão for menor que 2, então o dígito é igual a 0 (Zero).
+  # - Se o resto da divisão for maior ou igual a 2, então o dígito verificador é igual a 11 menos o resto da divisão (11 - resto).
+    if resto<2:
+      digito=0
+    else:
+      digito=(11-mod)
+      digitos.append(str(digito))
+
+    resul=int(digitos[0])*2
+    
+    #gambiarra pra dar certo a soma 
+    for h in range(len(cpfList)):
+      total2+=int(cpfList[h])*k
+      k+=1
+    total2+=resul
+    
+    resto2=total2/11
+    mod2=total2%11
+    #aq encontra o outro digito
+    if resto2<2:
+      digito2=0
+    else:
+      digito2=(11-mod2)
+    digitos.append(str(digito2))
+    #aq eu dou append e faço voltar ao normal a ordem
+    cpfList.reverse()
+    for digs in range(len(digitos)):
+      cpfList.append(digitos[digs])
+    # print(cpfList)
+    # print(digitos)
+    if cpfList==list(cpf):
+        verifica.clear()
+        tamanhoCpf.clear()
+        cpfOk=True
+        return cpfOk
+    
+  else:
+    #se o len n der 11 entao eu apago tudo e tento dnv
+    # print(len(tamanhoCpf))
+    tamanhoCpf.clear()
+    verifica.clear()
+    cpfOk=False
+    return cpfOk
+
+#verifica a senha se tem 6 digito
+def valida_senha(senha,senhaOk):
+  senhaList=list(senha)
+#tem q ter 6 digitos exatamente? é oq ta escrito la
+  if len(senhaList)==6:
+    senhaOk=True
+    return senhaOk
+  else:
+    senhaOk=False
+    return senhaOk
+
+#funcao para verificar o email temq  ter um arroba no meio da string
+def valida_email(email,emailOk):
+  for arroba in range (len(email)):
+    if '@' in email:
+     
+      emailOk=True
+      return emailOk
+    else:
+      emailOk=False 
+      return emailOk
+#funcao para verificar o nome (n pode ter nem letra nem numero essa funcao str.isalpha() verifica isso)
+def valida_nome(nome,nomeOk):
+ 
+  if str.isalpha(nome)==True:
+    nomeOk=True
+    return nomeOk
+  else:
+    nomeOk=False
+    return nomeOk
+
+#2-Consultar cliente
+def consulta_cliente(cpf,vetusuarios):
+  for usuario in vetusuarios:    
+    if cpf == usuario.cpf:
+        print(f"O nome do cliente é {usuario.nome}")
+        print(f"O email do cliente é {usuario.email}")
+
+#verifica senha pra comprar etc
+def verifica_senha(vetusuario,cpf,senha):
+  for i in vetusuario:
+      if i.senha==senha and i.cpf==cpf:
+        return senha
+     
+def cpfFuncoes(vetusuario,cpf):
+  for i in vetusuario:
+    if i.cpf==cpf:
+      return i.cpf
+    
+# Cria produtos
+def cria_produtos(vetprodutos):
+
+  pasta_dente = produtos()
+  pasta_dente.id=1
+  pasta_dente.valor = 5
+  pasta_dente.nome = "Pasta de dente"
+  vetprodutos.append(pasta_dente)
+
+  arroz_1kg = produtos()
+  arroz_1kg.id=2
+  arroz_1kg.valor = 8
+  arroz_1kg.nome = "Arroz de 1kg"
+  vetprodutos.append(arroz_1kg)
+  
+  Vinho = produtos()
+  Vinho.id=3
+  Vinho.valor = 20
+  Vinho.nome = "Vinho 2 litros"
+  vetprodutos.append(Vinho)
+
+# Lista produtos
+def listar_produtos(vetprodutos):
+    for prod in vetprodutos:
+        print(f"Id: {prod.id}" + " "+prod.nome+ " Valor:", prod.valor)
+    print()
+
+  
+#Compra
+def comprar(vetprodutos,vetusuario,vetcarrinho):
+        carrinho=carrinhos()
+        carrinho.prodNome=[]
+        carrinho.prodValor=[]
+        carrinho.prodQtd=[]
+        # carrinho.compras=[]
+        print("oq deseja comprar?")
+        listar_produtos(vetprodutos)
+        compra=int(input("1-Pasta 2-Arroz 3-Vinho: "))
+        
+
+        qtd=int(input("Quantidade: "))
+        carrinho.cpfUsuario=input("Com qual cpf cadastrado vc deseja atrelar essa compra? ")
+        cpf=cpfFuncoes(vetusuario,carrinho.cpfUsuario)
+        while cpf!=carrinho.cpfUsuario:
+          print("cpf invalido")
+          carrinho.cpfUsuario=input("Com qual cpf cadastrado vc deseja atrelar essa compra? ")
+          cpf=cpfFuncoes(vetusuario,carrinho.cpfUsuario)
+          
+        senhaUsuario=input("Digite a senha: ")
+        senha=verifica_senha(vetusuario,carrinho.cpfUsuario,senhaUsuario)
+        while senha!=senhaUsuario:
+          senhaUsuario=input("Digite a senha: ")
+          senha=verifica_senha(vetusuario,carrinho.cpfUsuario,senhaUsuario)
+
+        
+        
+        for prod  in vetprodutos:
+             if prod.id==compra:
+
+
+               carrinho.prodNome.append(prod.nome)
+               carrinho.prodValor.append(prod.valor)
+               carrinho.prodQtd.append(qtd)
+               carrinho.valorCompra+=prod.valor*qtd
+               
+               print("Total: ",carrinho.valorCompra)
+               
+        for i in vetusuario:
+          if i.cpf==carrinho.cpfUsuario:
+            dinheiro=0
+            dinheiro=i.limite_credito-carrinho.valorCompra
+            if dinheiro<0:
+              print("Voce não tem limite suficiente ")
+            else:
+              i.limite_credito=i.limite_credito-carrinho.valorCompra
+              print("este é o limite de credito atualizado:",i.limite_credito)
+              vetcarrinho.append(carrinho)       
+        
+            
+#Mostrar carrinho
+def ver_carrinho(vetcarrinho,vetusuario,):
+  print("O carrinho de qual usuario voce quer ver? \n")
+  qualCarrinho=input("Digite o cpf desejado: ")
+  cpf=cpfFuncoes(vetusuario,qualCarrinho)
+  while cpf!=qualCarrinho:
+      print("cpf invalido")
+      qualCarrinho=input("Com qual cpf cadastrado vc deseja atrelar essa compra? ")
+      cpf=cpfFuncoes(vetusuario,qualCarrinho)
+  senhaUsuario=input("Digite a senha: ")
+  senha=verifica_senha(vetusuario,qualCarrinho,senhaUsuario)
+  while senha!=senhaUsuario:
+          senhaUsuario=input("Digite a senha: ")
+          senha=verifica_senha(vetusuario,qualCarrinho,senhaUsuario)
+  total=0
+  if len(vetcarrinho)<=0:
+    print("Voce nao tem nada no carrinho")
+  for j in vetusuario:
+          if (j.cpf)==qualCarrinho:
+              usuario=qualCarrinho 
+  print(f"O usuario é o cpf:{usuario}")    
+  for carrinho in vetcarrinho:
+    if carrinho.cpfUsuario==qualCarrinho:
+
+              for i in range (len(carrinho.prodNome)):
+                  print(f"O item selecionado é: {carrinho.prodNome[i]}")
+                  print(f"A quantidade é: {carrinho.prodQtd[i]}")
+                  print(f"O valor unitário é: {carrinho.prodValor[i]}")
+                  total+=carrinho.prodQtd[i]*carrinho.prodValor[i]
+               
+  print(f"O TOTAL DO CARRINHO É: {total:.2f}")    
+
+
+#5-Pagar conta
+def pagar_conta(vetusuario,vetcarrinho):
+  total=0
+  print("O carrinho de qual usuario voce quer pagar? \n")
+  qualPaga=input("Digite o cpf desejado: ")
+  cpf=cpfFuncoes(vetusuario,qualPaga)
+  while cpf!=qualPaga:
+          print("cpf invalido")
+          qualPaga=input("Com qual cpf cadastrado vc deseja atrelar essa compra? ")
+          cpf=cpfFuncoes(vetusuario,qualPaga)
+  senhaUsuario=input("Digite a senha: ")
+  senha=verifica_senha(vetusuario,qualPaga,senhaUsuario)
+  while senha!=senhaUsuario:
+          senhaUsuario=input("Digite a senha: ")
+          senha=verifica_senha(vetusuario,qualPaga,senhaUsuario)
+ 
+  for carrinho in vetcarrinho:
+    if carrinho.cpfUsuario==qualPaga:
+      for j in vetusuario:
+          if (j.cpf)==qualPaga:
+             usuario=qualPaga
+             for i in range (len(carrinho.prodNome)):
+                   total+=carrinho.prodQtd[i]*carrinho.prodValor[i]
+  print(f"O usuario é o cpf: {usuario}")                
+  print(f"O TOTAL DO CARRINHO É: {total:.2f}")
+  conta=input("VOCÊ DESEJA PAGAR A CONTA? 1- SIM 2- NÃO ")
+  if conta=='1':
+    print(f"sobrou {1000-total}")
+    print()
+    for carrinho in vetcarrinho:
+      if carrinho.cpfUsuario==qualPaga:
+        for i in vetusuario:
+          if i.cpf==qualPaga:
+            
+            carrinho.prodNome.clear()
+            carrinho.prodValor.clear()
+            carrinho.prodQtd.clear()
+            lim=i.limite_credito=1000
+    print(f"Limite de crédito atualizado: {lim}")        
+
+
+
+#Menu Principal
+
+def menu():
+  opcao = "-1"  
+  vetusuarios = []
+  vetprodutos = []
+  vetcarrinho=[]
+  
+  
+  cria_produtos(vetprodutos)
+ 
+  while True:
+    opcao = input("Seja bem vindo! Esse é o menu principal, escolha dentre as seguinte opções:\n\n1- Cadastro\n2- Consultar cliente\n3- Comprar\n4- Carrinho de compras\n5- Pagar conta\n6- Listar itens \n0- Sair\n")
+    
+    if opcao == "1":
+      print("-------------Opção selecionada: Cadastro-----------")
+      cadastro(vetusuarios)
+    elif opcao == "2":
+      print("----------Opção selecionada: Consultar cliente--------------")
+      parametro_consulta = input("Insira o CPF\n")
+      consulta_cliente(parametro_consulta,vetusuarios)
+    elif opcao == "3":
+      print("-------Opção selecionada: Comprar----------")
+      comprar(vetprodutos,vetusuarios,vetcarrinho)
+    elif opcao == "4":
+      print("-----------Opção selecionada: Carrinho de compras------------")
+      ver_carrinho(vetcarrinho,vetusuarios)
+    elif opcao == "5":
+      print("-----------Opção selecionada: Pagar conta------------")
+      pagar_conta(vetusuarios,vetcarrinho)
+    elif opcao == "6":
+      print("----------Opção selecionada: Lista Produtos------------")
+      listar_produtos(vetprodutos)
+    elif opcao == "0":
+      print("-----Opção selecionada: Sair--------")
+      break
+    else:
+      print("Opção inválida, tente novamente")
+
+menu()
